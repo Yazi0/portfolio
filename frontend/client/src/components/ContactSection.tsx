@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Mail, Phone, Github, Linkedin, MessageCircle } from "lucide-react";
 import emailjs from "@emailjs/browser";
-import dayjs from "dayjs"; // ✅ import dayjs
+import dayjs from "dayjs";
 
 const contactInfo = [
   {
@@ -49,31 +49,40 @@ export default function ContactSection() {
     message: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [isSending, setIsSending] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    emailjs
-      .send(
+    // Prevent sending if form is empty
+    if (!formData.name || !formData.email || !formData.message) {
+      alert("Please fill in all fields.");
+      return;
+    }
+
+    setIsSending(true);
+
+    try {
+      await emailjs.send(
         "service_97v797s", // your EmailJS service ID
         "template_jii8jwq", // your EmailJS template ID
         {
-          from_name: formData.name,
-          from_email: formData.email,
-          message: formData.message,
-          time: dayjs().format("YYYY-MM-DD HH:mm"), // ✅ current time
+          name: formData.name,       // matches {{name}} in template
+          email: formData.email,     // matches {{email}} in template
+          message: formData.message, // matches {{message}} in template
+          time: dayjs().format("YYYY-MM-DD HH:mm"), // matches {{time}} in template
         },
         "GyKTIiVHNDkQA8VaG" // your EmailJS public key
-      )
-      .then(
-        () => {
-          alert("Message sent successfully!");
-          setFormData({ name: "", email: "", message: "" });
-        },
-        (err) => {
-          console.error(err);
-          alert("Failed to send message. Please try again.");
-        }
       );
+
+      alert("Message sent successfully!");
+      setFormData({ name: "", email: "", message: "" });
+    } catch (err) {
+      console.error(err);
+      alert("Failed to send message. Please try again.");
+    } finally {
+      setIsSending(false);
+    }
   };
 
   return (
@@ -101,9 +110,7 @@ export default function ContactSection() {
                   href={info.href}
                   target={info.href.startsWith("http") ? "_blank" : undefined}
                   rel={
-                    info.href.startsWith("http")
-                      ? "noopener noreferrer"
-                      : undefined
+                    info.href.startsWith("http") ? "noopener noreferrer" : undefined
                   }
                   className="flex items-center gap-4"
                 >
@@ -146,14 +153,15 @@ export default function ContactSection() {
                   setFormData({ ...formData, message: e.target.value })
                 }
                 required
-                rows={4} // ✅ smaller, neat height
-                className="resize-none" // optional: prevent resizing
+                rows={4}
+                className="resize-none"
               />
               <Button
                 type="submit"
                 className="w-full bg-primary hover:bg-primary/80 text-background"
+                disabled={isSending}
               >
-                Send Message
+                {isSending ? "Sending..." : "Send Message"}
               </Button>
             </form>
           </Card>
