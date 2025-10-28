@@ -1,7 +1,7 @@
 import { Github, Linkedin, Mail, Phone, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import cvFile from "@/assets/cv/T.K.Y.Nimsara.pdf";
-
+import Img from "@/assets/image/img.jpg";
 
 export default function HeroSection() {
   const scrollToSection = (sectionId: string) => {
@@ -107,7 +107,7 @@ export default function HeroSection() {
               <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/20 via-chart-2/20 to-primary/20 backdrop-blur-sm border border-border shadow-lg flex items-center justify-center">
                 <div className="text-center space-y-2">
                   <img
-                    src="/src/assets/image/img.jpg"
+                    src={Img}
                     alt="Yasiru Nimsara"
                     className="w-40 h-40 md:w-56 md:h-56 rounded-2xl object-cover mx-auto"
                   />

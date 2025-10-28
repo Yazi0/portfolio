@@ -1,9 +1,12 @@
+"use client";
+
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Mail, Phone, Github, Linkedin } from "lucide-react";
+import { Mail, Phone, Github, Linkedin, MessageCircle } from "lucide-react";
 import { useState } from "react";
+import emailjs from "@emailjs/browser";
 
 const contactInfo = [
   {
@@ -30,6 +33,12 @@ const contactInfo = [
     value: "LinkedIn Profile",
     href: "https://www.linkedin.com/in/yasiru-nimsara-9a8566379",
   },
+  {
+    icon: MessageCircle, // instead of Whatsapp
+    label: "WhatsApp",
+    value: "+94 78 479 8095",
+    href: "https://wa.me/94784798095",
+  },
 ];
 
 export default function ContactSection() {
@@ -41,9 +50,30 @@ export default function ContactSection() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
-    alert("Message sent! (This is a demo)");
-    setFormData({ name: "", email: "", message: "" });
+
+    // Send email using EmailJS
+    emailjs
+      .send(
+        "service_97v797s",   // replace with your EmailJS service ID
+        "template_jii8jwq",  // replace with your EmailJS template ID
+        {
+          from_name: formData.name,
+          from_email: formData.email,
+          message: formData.message,
+          to_email: "yasiru01nimsara@gmail.com",
+        },
+        "GyKTIiVHNDkQA8VaG"    // replace with your EmailJS public key
+      )
+      .then(
+        () => {
+          alert("Message sent successfully!");
+          setFormData({ name: "", email: "", message: "" });
+        },
+        (err) => {
+          console.error(err);
+          alert("Failed to send message. Please try again.");
+        }
+      );
   };
 
   return (
@@ -59,6 +89,7 @@ export default function ContactSection() {
         </div>
 
         <div className="grid md:grid-cols-2 gap-8">
+          {/* Contact Info Cards */}
           <div className="space-y-4">
             {contactInfo.map((info, idx) => (
               <Card
@@ -90,47 +121,39 @@ export default function ContactSection() {
             ))}
           </div>
 
-          <Card className="p-6 md:p-8">
+          {/* Contact Form */}
+          <Card className="p-6 md:p-8 backdrop-blur-md bg-background/70 shadow-lg rounded-2xl">
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <Input
-                  placeholder="Your Name"
-                  value={formData.name}
-                  onChange={(e) =>
-                    setFormData({ ...formData, name: e.target.value })
-                  }
-                  required
-                  data-testid="input-name"
-                />
-              </div>
-
-              <div>
-                <Input
-                  type="email"
-                  placeholder="Your Email"
-                  value={formData.email}
-                  onChange={(e) =>
-                    setFormData({ ...formData, email: e.target.value })
-                  }
-                  required
-                  data-testid="input-email"
-                />
-              </div>
-
-              <div>
-                <Textarea
-                  placeholder="Your Message"
-                  value={formData.message}
-                  onChange={(e) =>
-                    setFormData({ ...formData, message: e.target.value })
-                  }
-                  required
-                  rows={5}
-                  data-testid="input-message"
-                />
-              </div>
-
-              <Button type="submit" className="w-full" data-testid="button-send">
+              <Input
+                placeholder="Your Name"
+                value={formData.name}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
+                required
+              />
+              <Input
+                type="email"
+                placeholder="Your Email"
+                value={formData.email}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
+                required
+              />
+              <Textarea
+                placeholder="Your Message"
+                value={formData.message}
+                onChange={(e) =>
+                  setFormData({ ...formData, message: e.target.value })
+                }
+                required
+                rows={10}
+              />
+              <Button
+                type="submit"
+                className="w-full bg-primary hover:bg-primary/80 text-background"
+              >
                 Send Message
               </Button>
             </form>
