@@ -1,12 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Mail, Phone, Github, Linkedin, MessageCircle } from "lucide-react";
-import { useState } from "react";
 import emailjs from "@emailjs/browser";
+import dayjs from "dayjs"; // ✅ import dayjs
 
 const contactInfo = [
   {
@@ -34,7 +35,7 @@ const contactInfo = [
     href: "https://www.linkedin.com/in/yasiru-nimsara-9a8566379",
   },
   {
-    icon: MessageCircle, // instead of Whatsapp
+    icon: MessageCircle,
     label: "WhatsApp",
     value: "+94 78 479 8095",
     href: "https://wa.me/94784798095",
@@ -51,18 +52,17 @@ export default function ContactSection() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Send email using EmailJS
     emailjs
       .send(
-        "service_97v797s",   // replace with your EmailJS service ID
-        "template_jii8jwq",  // replace with your EmailJS template ID
+        "service_97v797s", // your EmailJS service ID
+        "template_jii8jwq", // your EmailJS template ID
         {
           from_name: formData.name,
           from_email: formData.email,
           message: formData.message,
-          to_email: "yasiru01nimsara@gmail.com",
+          time: dayjs().format("YYYY-MM-DD HH:mm"), // ✅ current time
         },
-        "GyKTIiVHNDkQA8VaG"    // replace with your EmailJS public key
+        "GyKTIiVHNDkQA8VaG" // your EmailJS public key
       )
       .then(
         () => {
@@ -111,9 +111,7 @@ export default function ContactSection() {
                     <info.icon className="h-6 w-6 text-primary" />
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">
-                      {info.label}
-                    </p>
+                    <p className="text-sm text-muted-foreground">{info.label}</p>
                     <p className="font-medium">{info.value}</p>
                   </div>
                 </a>
@@ -148,7 +146,8 @@ export default function ContactSection() {
                   setFormData({ ...formData, message: e.target.value })
                 }
                 required
-                rows={10}
+                rows={4} // ✅ smaller, neat height
+                className="resize-none" // optional: prevent resizing
               />
               <Button
                 type="submit"
