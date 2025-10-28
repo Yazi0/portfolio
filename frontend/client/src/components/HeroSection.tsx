@@ -44,7 +44,7 @@ export default function HeroSection() {
               <Button variant="outline" asChild data-testid="button-download-resume">
                 <a href={cvFile} download>
                   <Download className="h-4 w-4 mr-2" />
-                  Download CV
+                  Resume CV
                 </a>
               </Button>
             </div>

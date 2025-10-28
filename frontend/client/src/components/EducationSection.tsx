@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { GraduationCap } from "lucide-react";
 
 type Education = {
@@ -8,22 +7,42 @@ type Education = {
   degree: string;
   institution: string;
   year: string;
-  description: string;
+  description?: string;
 };
 
 export default function EducationSection() {
-  const [education, setEducation] = useState<Education[]>([]);
-
-  useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/education/education/")
-      .then((res) => res.json())
-      .then((data) => setEducation(data))
-      .catch((err) => console.error("Error fetching education:", err));
-  }, []);
+  // Local static data (no backend needed)
+  const education: Education[] = [
+    {
+      id: 1,
+      degree: "HND in Information Technology",
+      institution: "Sri Lanka Institute of Advanced Technological Education (SLIATE)",
+      year: "Ongoing",
+      description:
+        "Specialized in software development, database systems, and web technologies.",
+    },
+    {
+      id: 2,
+      degree: "G.C.E. Advanced Level Examination",
+      institution: "MR/Denipitiya M.V. (National School)",
+      year: "2021",
+      description:
+        "Completed A/L studies in the Technology stream with strong academic performance.",
+    },
+    {
+      id: 3,
+      degree: "G.C.E. Ordinary Level Examination",
+      institution: "MR/Warakapitiya M.V.",
+      year: "2018",
+      description:
+        "Achieved excellent results and built a strong foundation in mathematics and IT.",
+    },
+  ];
 
   return (
     <section id="education" className="py-16 md:py-20 lg:py-24">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Section Header */}
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-semibold mb-4">Education</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
@@ -31,6 +50,7 @@ export default function EducationSection() {
           </p>
         </div>
 
+        {/* Education Timeline */}
         <div className="space-y-8">
           {education.map((edu) => (
             <div
@@ -49,7 +69,9 @@ export default function EducationSection() {
                   </span>
                 </div>
                 <p className="text-muted-foreground">{edu.institution}</p>
-                <p className="text-sm text-foreground/80">{edu.description}</p>
+                {edu.description && (
+                  <p className="text-sm text-foreground/80">{edu.description}</p>
+                )}
               </div>
             </div>
           ))}
