@@ -38,7 +38,7 @@ const contactInfo = [
     icon: MessageCircle,
     label: "WhatsApp",
     value: "+94 78 479 8095",
-    href: "https://wa.me/94784798095",
+    href: "https://wa.me/94776683072",
   },
 ];
 
