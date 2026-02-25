@@ -1,7 +1,8 @@
 import { Moon, Sun, Search, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "./ThemeProvider";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 
 interface NavbarProps {
   onSearchClick: () => void;
@@ -10,11 +11,50 @@ interface NavbarProps {
 export default function Navbar({ onSearchClick }: NavbarProps) {
   const { theme, setTheme } = useTheme();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("hero");
+
+  useEffect(() => {
+    const sectionIds = ["hero", "projects", "skills", "education", "contact"];
+
+    const observerOptions = {
+      root: null,
+      rootMargin: "-20% 0px -70% 0px", // Trigger when section is roughly in the middle
+      threshold: 0,
+    };
+
+    const handleIntersect = (entries: IntersectionObserverEntry[]) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setActiveSection(entry.target.id);
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(handleIntersect, observerOptions);
+
+    sectionIds.forEach((id) => {
+      const element = document.getElementById(id);
+      if (element) {
+        observer.observe(element);
+      }
+    });
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
+      const offset = 80; // Account for navbar height
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - offset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth"
+      });
       setMobileMenuOpen(false);
     }
   };
@@ -33,10 +73,12 @@ export default function Navbar({ onSearchClick }: NavbarProps) {
         <div className="flex items-center justify-between h-16">
           <button
             onClick={() => scrollToSection("hero")}
-            className="font-bold text-xl hover-elevate active-elevate-2 rounded-md px-3 py-1.5"
+            className="font-black text-xl hover-elevate active-elevate-2 rounded-md px-3 py-1.5 group transition-all duration-300"
             data-testid="link-home"
           >
-            T.K.Y.Nimsara
+            <span className="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent group-hover:scale-105 inline-block transition-transform">
+              T.K.Y.Nimsara
+            </span>
           </button>
 
           <div className="hidden md:flex items-center gap-1">
@@ -45,9 +87,22 @@ export default function Navbar({ onSearchClick }: NavbarProps) {
                 key={item.id}
                 variant="ghost"
                 onClick={() => scrollToSection(item.id)}
+                className={`relative px-4 py-2 transition-all duration-300 font-medium ${activeSection === item.id
+                  ? "text-blue-500 bg-blue-500/5"
+                  : "text-foreground/70 hover:text-foreground"
+                  }`}
                 data-testid={`link-${item.id}`}
               >
                 {item.label}
+                {activeSection === item.id && (
+                  <motion.span
+                    layoutId="activeTab"
+                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-500 to-purple-500"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.3 }}
+                  />
+                )}
               </Button>
             ))}
           </div>
@@ -99,7 +154,10 @@ export default function Navbar({ onSearchClick }: NavbarProps) {
               <Button
                 key={item.id}
                 variant="ghost"
-                className="w-full justify-start"
+                className={`w-full justify-start ${activeSection === item.id
+                  ? "text-blue-500 bg-blue-500/5 font-bold"
+                  : "text-foreground/70"
+                  }`}
                 onClick={() => scrollToSection(item.id)}
                 data-testid={`link-mobile-${item.id}`}
               >

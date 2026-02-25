@@ -25,19 +25,19 @@ const contactInfo = [
   {
     icon: Github,
     label: "GitHub",
-    value: "github.com/Yazi0",
+    value: "Yazi0",
     href: "https://github.com/Yazi0",
   },
   {
     icon: Linkedin,
     label: "LinkedIn",
-    value: "LinkedIn Profile",
+    value: "Yasiru Nimsara",
     href: "https://www.linkedin.com/in/yasiru-nimsara-9a8566379",
   },
   {
     icon: MessageCircle,
     label: "WhatsApp",
-    value: "+94 78 479 8095",
+    value: "+94 77 668 3072",
     href: "https://wa.me/94776683072",
   },
 ];
